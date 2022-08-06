@@ -1,0 +1,297 @@
+<template>
+  <div class="header">
+    <div class="name-box">
+      <div class="name" @click="toHome">bloniea 姉さま的图床</div>
+    </div>
+
+    <div class="btns">
+      <div class="item">
+        <el-input
+          class="search"
+          v-model="keyword"
+          placeholder="search"
+          :suffix-icon="Search"
+          @keyup.enter="toSearch"
+        />
+      </div>
+      <div class="item pc">
+        <div class="upload" @click="settingDialogVisible = true">设置</div>
+      </div>
+
+      <div class="item pc" v-if="loginStatus">
+        <div class="upload" @click="uploadDialogVisible">
+          <el-icon> <UploadFilled /> </el-icon>上传
+        </div>
+      </div>
+
+      <div class="item pc" v-if="loginStatus">
+        <div class="avatar">
+          <el-avatar :src="userInfo.avatar_url" />
+        </div>
+
+        <el-dropdown trigger="click">
+          <span class="user">
+            {{ userInfo.user }}
+            <el-icon class="el-icon--right"> <arrow-down /> </el-icon
+          ></span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="toMyRepo(userInfo.html_url)"
+                >我的存储库</el-dropdown-item
+              >
+            </el-dropdown-menu>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+
+      <div class="item app" v-if="loginStatus">
+        <el-dropdown trigger="click">
+          <span class="user">
+            <div class="avatar">
+              <el-avatar :src="userInfo.avatar_url" /></div
+          ></span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="toMyRepo(userInfo.html_url)"
+                >我的存储库</el-dropdown-item
+              >
+            </el-dropdown-menu>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+      <div class="item" v-if="!loginStatus || !userInfo">
+        <div @click="login" class="login">github 登陆</div>
+      </div>
+      <div class="item menu app">
+        <el-dropdown trigger="click">
+          <el-icon><Menu /></el-icon>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="uploadDialogVisible"
+                ><el-icon> <UploadFilled /> </el-icon>上传</el-dropdown-item
+              >
+            </el-dropdown-menu>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="settingDialogVisible = true"
+                ><el-icon><Tools /></el-icon>设置</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+    </div>
+    <el-dialog
+      v-model="settingDialogVisible"
+      title="设置"
+      destroy-on-close
+      @close="closeSetting"
+    >
+      <div class="setting">
+        <el-form :model="settingData.form" label-width="6rem">
+          <el-form-item label="用户名">
+            <el-input
+              v-model="settingData.form.owner"
+              @focus="settingData.error = false"
+              placeholder="username"
+              @change="settingData.error = false"
+            />
+          </el-form-item>
+          <el-form-item label="存储库">
+            <el-input
+              v-model="settingData.form.repo"
+              @focus="settingData.error = false"
+              placeholder="repo"
+              @change="settingData.error = false"
+            />
+          </el-form-item>
+          <el-form-item label="url">
+            <el-input
+              v-model="settingData.form.url"
+              @focus="settingData.error = false"
+              @change="settingData.error = false"
+              placeholder="https://username.github.io"
+            />
+          </el-form-item>
+        </el-form>
+        <div class="error" v-if="settingData.error">
+          存储库不存在，请检查用户名和存储库名称
+        </div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="closeSetting">取消</el-button>
+          <el-button type="primary" @click="save">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import QS from 'qs'
+import {
+  UploadFilled,
+  ArrowDown,
+  Search,
+  Menu,
+  Tools,
+} from '@element-plus/icons-vue'
+import { useRoute, useRouter } from 'vue-router'
+import { computed, inject, reactive, ref } from '@vue/runtime-core'
+import { useStore } from 'vuex'
+import { ElMessage } from 'element-plus'
+import { getUserApi, getUserRepoApi } from '@/comm/fetch'
+import config from '@/config.js'
+
+const login = async () => {
+  const obj = {
+    client_id: '202a106a964267fa2de7',
+    redirect_uri: 'http://127.0.0.1:5173/',
+    login: 'bloniea',
+    state: 'seele',
+    scope: 'repo',
+  }
+
+  window.location.href =
+    'https://github.bloniea.ml/login/oauth/authorize?' + QS.stringify(obj)
+  // const res = await fetch('https://github.com/login/oauth/authorize?'+QS.stringify(obj))
+}
+const route = useRoute()
+const router = useRouter()
+const getCode = async () => {
+  const url = window.location.href
+  const c = <string>'?code='
+  const indexCode = <number>url.indexOf(c)
+  const indexAnd = <number>url.indexOf('&')
+  if (indexCode > -1) {
+    const end = indexAnd > -1 ? indexAnd : url.length
+    const code = url.slice(indexCode + c.length, end)
+    window.localStorage.setItem('code', code)
+    const newUrl = url.slice(0, indexCode)
+    // window.location.href = newUrl
+    // history.pushState('', '', newUrl)
+  }
+}
+getCode()
+
+const getUser = async () => {
+  const res = await getUserApi()
+  if (res.ok) {
+    const userInfo = {
+      user: res.data.name,
+      html_url: res.data.html_url,
+      avatar_url: res.data.avatar_url,
+    }
+    window.localStorage.setItem('userInfo', JSON.stringify(userInfo))
+    store.commit('setStatus', true)
+    store.commit('setUserInfo', userInfo)
+  }
+}
+
+const getToken = async () => {
+  const code = window.localStorage.getItem('code')
+  if (code && code != 'undefined') {
+    const obj = {
+      client_id: '202a106a964267fa2de7',
+      client_secret: '4e4cfd592013ead760364bf08241423b98abe5ca',
+      redirect_uri: 'http://127.0.0.1:5173/',
+      code: code,
+    }
+
+    const result = await fetch('/github/login/oauth/access_token', {
+      method: 'Post',
+      body: JSON.stringify(obj),
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        Accept: ' application/json',
+      },
+    })
+    if (result.ok) {
+      const res = await result.json()
+      if (res.token_type && res.access_token) {
+        window.localStorage.setItem(
+          'access_token',
+          res.token_type + ' ' + res.access_token
+        )
+        await getUser()
+        router.push('/')
+      }
+    } else {
+      router.push('/')
+    }
+    window.localStorage.removeItem('code')
+  }
+}
+getToken()
+
+const store = useStore()
+const loginStatus = computed(() => store.state.status)
+const userInfo = computed(() => store.state.userInfo)
+// 显示上传表单
+const uploadDialogVisible = () => {
+  store.commit('showUploadDialog', true)
+}
+
+const keyword = ref('')
+// 搜索
+const toSearch = () => {
+  router.push({ name: 'Home', query: { keyword: keyword.value } })
+}
+// 返回主页
+const toHome = () => {
+  router.push('/')
+}
+
+const logout = () => {
+  window.localStorage.removeItem('access_token')
+  window.localStorage.removeItem('userInfo')
+  store.commit('setStatus', false)
+}
+const toMyRepo = (url: string) => {
+  window.open(url)
+}
+
+const settingDialogVisible = ref(false)
+const settingInfo = computed(() => store.state.settingInfo)
+
+const settingData = reactive({
+  form: {
+    url: settingInfo.value.url,
+    owner: settingInfo.value.owner,
+    repo: settingInfo.value.repo,
+  },
+  error: false,
+})
+const reload = inject<any>('reload')
+
+const save = async () => {
+  const res = await getUserRepoApi(
+    `${settingData.form.owner}/${settingData.form.repo}`
+  )
+  if (res.ok) {
+    const obj = settingData.form
+    window.localStorage.setItem('settingInfo', JSON.stringify(obj))
+    store.commit('setSettingInfo', settingData.form)
+    reload()
+    settingDialogVisible.value = false
+  } else {
+    settingData.error = true
+  }
+}
+const closeSetting = () => {
+  settingDialogVisible.value = false
+  settingData.form.repo = settingInfo.value.repo
+  settingData.form.owner = settingInfo.value.owner
+  settingData.form.url = settingInfo.value.url
+}
+</script>
+
+<style lang="stylus" scoped>
+@import './MyHeader.styl'
+</style>

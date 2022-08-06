@@ -1,0 +1,114 @@
+.header {
+  height 100%
+  display flex
+  justify-content space-between
+  padding 0 2rem
+  max-width 140rem
+  margin 0 auto
+  .name {
+    overflow hidden
+    white-space nowrap
+    cursor pointer
+    user-select none
+    line-height 6rem
+    font-weight bold
+    font-size 2rem
+    background-image linear-gradient(left, #df79fe, #e07800 25%, #df79fe 50%, #e07800 75%, #df79fe)
+    background-image -moz-linear-gradient(left, #df79fe, #e07800 25%, #df79fe 50%, #e07800 75%, #df79fe)
+    background-image -webkit-linear-gradient(left, #df79fe, #e07800 25%, #df79fe 50%, #e07800 75%, #df79fe)
+    background-image -ms-linear-gradient(left, #df79fe, #e07800 25%, #df79fe 50%, #e07800 75%, #df79fe)
+    text-fill-color transparent
+    -webkit-text-fill-color transparent
+    -moz-text-fill-color transparent
+    -ms-text-fill-color transparent
+    background-clip text
+    -webkit-background-clip text
+    -moz-background-clip text
+    -ms-background-clip text
+    background-size 200% 100%
+    animation masked-animation 4s infinite linear
+    @keyframes masked-animation {
+      0% {
+        background-position 0 0
+      }
+      100% {
+        background-position -100% 0
+      }
+    }
+  }
+  .btns {
+    display flex
+    line-height 6rem
+    .item {
+      margin-left 2rem
+      display flex
+      .search {
+        margin 1rem
+        :deep(.el-input__wrapper) {
+          border-radius 2rem
+        }
+        :deep(input) {
+          width 5rem
+          transition width 0.2s
+          &:focus {
+            border-color $baseColor
+            width 20rem
+          }
+        }
+      }
+      .login {
+        font-size 1.6rem
+      }
+      .upload {
+        cursor pointer
+        font-size 1.6rem
+      }
+      .avatar {
+        width 5rem
+        height 5rem
+        margin 0.5rem
+        margin-right 1rem
+        .el-avatar {
+          --el-avatar-size 5rem
+        }
+      }
+      .user {
+        font-size 1.6rem
+        color #000
+        line-height 6rem
+        cursor pointer
+      }
+    }
+    .menu {
+      .el-icon {
+        font-size 2.3rem
+        height 100%
+      }
+    }
+  }
+  .setting {
+    .error {
+      color #eb3232
+      text-align center
+      font-size 1.3rem
+    }
+  }
+}
+@media screen and (min-width 1025px) {
+  :deep(.el-overlay .el-dialog) {
+    --el-dialog-width 40%
+  }
+}
+@media screen and (max-width 767px) {
+  :deep(.el-overlay .el-dialog) {
+    --el-dialog-width 70%
+  }
+  .header .btns .pc {
+    display none
+  }
+}
+@media screen and (min-width 768px) {
+  .header .btns .app {
+    display none
+  }
+}
