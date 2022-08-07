@@ -509,18 +509,10 @@ const closeUploadDialog = () => {
   continueBtn.value = false
 }
 const imgLoadError = async (e: any) => {
-  // e.target.src = e.target.src
-  console.log(e)
+  
+
   reSetImgUrl(e.target.src, e.target, 5)
-  // try {
-  //   const r = await fetch(e.target.src)
-  //   console.log(r)
-  //   if (r.status === 404) {
-  //     e.target.src = e.target.src
-  //   }
-  // } catch (err) {
-  //   e.target.src = e.target.src
-  // }
+  
 }
 const reSetImgUrl = (src: string, target: any, count: number = 1) => {
   const img = new Image()
