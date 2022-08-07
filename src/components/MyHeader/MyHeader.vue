@@ -66,7 +66,7 @@
         </el-dropdown>
       </div>
       <div class="item" v-if="!loginStatus || !userInfo">
-        <div @click="login" class="login">github 登陆</div>
+        <div @click="login" class="login">github登陆</div>
       </div>
       <div class="item menu app">
         <el-dropdown trigger="click">

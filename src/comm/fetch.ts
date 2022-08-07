@@ -30,7 +30,8 @@ const fetchApi = async (
       ElNotification({
         title: '提示',
         type: 'error',
-        message: '当前授权用户与网站设置的用户名不一致或者存储库不存在',
+        message:
+          '资源不存在，请检查当前授权用户与网站设置,上传和删除功能需要等待时间刷新',
         duration: 5000,
       })
     }

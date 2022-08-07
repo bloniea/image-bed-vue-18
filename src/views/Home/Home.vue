@@ -208,7 +208,7 @@ const getIMages = async (i: number = 0) => {
 }
 // 去除非图片数据
 const fotmatImages = (obj: item): any => {
-  const types = ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'svg']
+  const types = ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'svg', 'ico']
   const indexlastOf = obj.path.lastIndexOf('.')
   const url = indexlastOf > -1 ? obj.path.substring(indexlastOf + 1) : ''
   return types.indexOf(url) > -1
@@ -310,13 +310,6 @@ const deleteImage = async () => {
 
       closeImgDetail()
       // data.images.splice()
-    } else {
-      ElNotification({
-        title: '提示',
-        type: 'error',
-        message: '资源已不存在',
-        duration: 2000,
-      })
     }
   })
 }
@@ -509,10 +502,7 @@ const closeUploadDialog = () => {
   continueBtn.value = false
 }
 const imgLoadError = async (e: any) => {
-  
-
   reSetImgUrl(e.target.src, e.target, 5)
-  
 }
 const reSetImgUrl = (src: string, target: any, count: number = 1) => {
   const img = new Image()
