@@ -40,7 +40,7 @@
     display flex
     line-height 6rem
     .item {
-      margin-left 2rem
+      margin-left 1rem
       display flex
       .search {
         margin 1rem
@@ -93,22 +93,30 @@
       font-size 1.3rem
     }
   }
-}
-@media screen and (min-width 1025px) {
-  :deep(.el-overlay .el-dialog) {
-    --el-dialog-width 40%
+  @media screen and (min-width 769px) {
+    .btns .app {
+      display none
+    }
   }
-}
-@media screen and (max-width 767px) {
-  :deep(.el-overlay .el-dialog) {
-    --el-dialog-width 70%
+  @media screen and (min-width 1025px) {
+    :deep(.el-overlay .el-dialog) {
+      --el-dialog-width 40%
+    }
   }
-  .header .btns .pc {
-    display none
-  }
-}
-@media screen and (min-width 768px) {
-  .header .btns .app {
-    display none
+  @media screen and (max-width 768px) {
+    :deep(.el-overlay .el-dialog) {
+      --el-dialog-width 70%
+    }
+    .btns .pc {
+      display none
+    }
+    .setting {
+      :deep(.el-form-item) {
+        flex-direction column
+        .el-form-item__label {
+          justify-content left
+        }
+      }
+    }
   }
 }

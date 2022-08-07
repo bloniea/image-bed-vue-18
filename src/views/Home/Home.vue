@@ -510,13 +510,31 @@ const closeUploadDialog = () => {
 }
 const imgLoadError = async (e: any) => {
   // e.target.src = e.target.src
-  try {
-    const r = await fetch(e.target.src)
-    if (r.status === 404) {
-      e.target.src = e.target.src
+  console.log(e)
+  reSetImgUrl(e.target.src, e.target, 5)
+  // try {
+  //   const r = await fetch(e.target.src)
+  //   console.log(r)
+  //   if (r.status === 404) {
+  //     e.target.src = e.target.src
+  //   }
+  // } catch (err) {
+  //   e.target.src = e.target.src
+  // }
+}
+const reSetImgUrl = (src: string, target: any, count: number = 1) => {
+  const img = new Image()
+  img.src = src
+  img.onload = () => {
+    target.src = src
+  }
+  img.onerror = () => {
+    count -= 1
+    if (count >= 0) {
+      setTimeout(() => {
+        reSetImgUrl(src, target, count)
+      }, 3000)
     }
-  } catch (err) {
-    // console.log(err)
   }
 }
 </script>

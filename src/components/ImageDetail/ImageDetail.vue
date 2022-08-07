@@ -36,36 +36,42 @@
         </div> -->
         <div class="item">
           <span>图片链接</span>
-          <el-input
-            :class="'urlDom' + index"
-            readonly
-            :value="config.url + list.path"
-          />
-          <el-button :icon="CopyDocument" @click="copyUrl('.urlDom' + index)"
-            >复制</el-button
-          >
+          <div class="left">
+            <el-input
+              :class="'urlDom' + index"
+              readonly
+              :value="config.url + list.path"
+            />
+            <el-button :icon="CopyDocument" @click="copyUrl('.urlDom' + index)"
+              >复制</el-button
+            >
+          </div>
         </div>
         <div class="item">
           <span>HTML</span>
-          <el-input
-            readonly
-            :class="'htmlDom' + index"
-            :value="`<img src= &quot;${config.url + list.path}&quot; />`"
-          />
-          <el-button :icon="CopyDocument" @click="copyUrl('.htmlDom' + index)"
-            >复制</el-button
-          >
+          <div class="left">
+            <el-input
+              readonly
+              :class="'htmlDom' + index"
+              :value="`<img src= &quot;${config.url + list.path}&quot; />`"
+            />
+            <el-button :icon="CopyDocument" @click="copyUrl('.htmlDom' + index)"
+              >复制</el-button
+            >
+          </div>
         </div>
         <div class="item">
           <span>Markdown</span>
-          <el-input
-            :class="'mdDom' + index"
-            readonly
-            :value="` ![${list.name}](${config.url + list.path})`"
-          />
-          <el-button :icon="CopyDocument" @click="copyUrl('.mdDom' + index)"
-            >复制</el-button
-          >
+          <div class="left">
+            <el-input
+              :class="'mdDom' + index"
+              readonly
+              :value="` ![${list.name}](${config.url + list.path})`"
+            />
+            <el-button :icon="CopyDocument" @click="copyUrl('.mdDom' + index)"
+              >复制</el-button
+            >
+          </div>
         </div>
       </div>
     </div>

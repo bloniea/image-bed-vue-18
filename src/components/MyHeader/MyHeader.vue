@@ -146,16 +146,18 @@ import { useRoute, useRouter } from 'vue-router'
 import { computed, inject, reactive, ref } from '@vue/runtime-core'
 import { useStore } from 'vuex'
 import { ElMessage } from 'element-plus'
-import { getUserApi, getUserRepoApi } from '@/comm/fetch'
+import { getUserApi, getUserRepoApi, getTokenApi } from '@/comm/fetch'
 import config from '@/config.js'
+const store = useStore()
+const loginStatus = computed(() => store.state.status)
+const userInfo = computed(() => store.state.userInfo)
 
 const login = async () => {
   const obj = {
-    client_id: '202a106a964267fa2de7',
-    redirect_uri: 'http://127.0.0.1:5173/',
-    login: 'bloniea',
-    state: 'seele',
-    scope: 'repo',
+    client_id: config.client_id,
+    redirect_uri: window.location.href,
+    state: new Date().getTime(),
+    scope: config.scope,
   }
 
   window.location.href =
@@ -165,17 +167,16 @@ const login = async () => {
 const route = useRoute()
 const router = useRouter()
 const getCode = async () => {
-  const url = window.location.href
-  const c = <string>'?code='
-  const indexCode = <number>url.indexOf(c)
-  const indexAnd = <number>url.indexOf('&')
-  if (indexCode > -1) {
-    const end = indexAnd > -1 ? indexAnd : url.length
-    const code = url.slice(indexCode + c.length, end)
-    window.localStorage.setItem('code', code)
-    const newUrl = url.slice(0, indexCode)
-    // window.location.href = newUrl
-    // history.pushState('', '', newUrl)
+  const search: string = window.location.search
+  const ind: number = search.indexOf('?')
+  if (ind < 0) return
+  const searchObj = QS.parse(search.substring(ind + 1))
+  if (searchObj.code && searchObj.state) {
+    window.sessionStorage.setItem('code', searchObj.code)
+    delete searchObj.code
+    delete searchObj.state
+    const name = route.name
+    router.push({ name: <any>name, query: searchObj })
   }
 }
 getCode()
@@ -189,50 +190,38 @@ const getUser = async () => {
       avatar_url: res.data.avatar_url,
     }
     window.localStorage.setItem('userInfo', JSON.stringify(userInfo))
+
     store.commit('setStatus', true)
     store.commit('setUserInfo', userInfo)
   }
 }
 
 const getToken = async () => {
-  const code = window.localStorage.getItem('code')
+  const code = window.sessionStorage.getItem('code')
   if (code && code != 'undefined') {
     const obj = {
       client_id: '202a106a964267fa2de7',
       client_secret: '4e4cfd592013ead760364bf08241423b98abe5ca',
-      redirect_uri: 'http://127.0.0.1:5173/',
+      redirect_uri: window.location.href,
       code: code,
     }
-
-    const result = await fetch('/github/login/oauth/access_token', {
-      method: 'Post',
-      body: JSON.stringify(obj),
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-        Accept: ' application/json',
-      },
-    })
+    window.sessionStorage.removeItem('code')
+    const result = await getTokenApi('/login/oauth/access_token', obj)
     if (result.ok) {
-      const res = await result.json()
-      if (res.token_type && res.access_token) {
+      if (result.data.token_type && result.data.access_token) {
         window.localStorage.setItem(
           'access_token',
-          res.token_type + ' ' + res.access_token
+          result.data.token_type + ' ' + result.data.access_token
         )
         await getUser()
-        router.push('/')
+      } else {
+        ElMessage.error('网络超时请重新授权')
       }
-    } else {
-      router.push('/')
     }
-    window.localStorage.removeItem('code')
   }
 }
 getToken()
 
-const store = useStore()
-const loginStatus = computed(() => store.state.status)
-const userInfo = computed(() => store.state.userInfo)
 // 显示上传表单
 const uploadDialogVisible = () => {
   store.commit('showUploadDialog', true)
@@ -258,7 +247,18 @@ const toMyRepo = (url: string) => {
 }
 
 const settingDialogVisible = ref(false)
-const settingInfo = computed(() => store.state.settingInfo)
+const settingInfo = computed(() => {
+  const data = window.localStorage.getItem('settingInfo')
+  if (data && data !== 'undefined') {
+    return JSON.parse(data)
+  } else {
+    return {
+      url: config.url,
+      owner: config.owner,
+      repo: config.repo,
+    }
+  }
+})
 
 const settingData = reactive({
   form: {

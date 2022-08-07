@@ -17,11 +17,21 @@
         margin 1rem 0
         justify-content space-between
         span {
-          width 10rem
+          width 12rem
           line-height 3.2rem
+          font-size 1.3rem
         }
-        .el-button {
-          margin-left 0.5rem
+        .left {
+          display flex
+          justify-content space-around
+          width 100%
+          .el-input {
+            font-size 1.3rem
+          }
+          .el-button {
+            margin-left 0.5rem
+            font-size 1.3rem
+          }
         }
       }
       .operation {
@@ -43,6 +53,14 @@
         }
         .update-edit {
           display flex
+        }
+      }
+    }
+    @media screen and (max-width 768px) {
+      .info .item {
+        flex-direction column
+        span {
+          display block
         }
       }
     }

@@ -187,18 +187,23 @@
       transform rotate(360deg)
     }
   }
-  @media screen and (min-width 768px) {
+  :deep(.el-dialog) {
+    .el-dialog__title {
+      font-size 1.7rem
+    }
+  }
+  @media screen and (min-width 769px) {
     :deep(.el-overlay .el-dialog) {
       --el-dialog-width 70%
     }
   }
-  @media screen and (max-width 1023px) {
+  @media screen and (max-width 1024px) {
     .img-box .img {
       width 32%
       margin 1rem (4% / 8)
     }
   }
-  @media screen and (max-width 767px) {
+  @media screen and (max-width 768px) {
     .img-box .img {
       width 48%
       margin 1rem (4% / 8)

@@ -1,6 +1,5 @@
 import { ElMessage, ElNotification } from 'element-plus'
-import config from '@/config'
-
+const github = '/github'
 const api = '/github/api'
 // const api = 'https://api.github.com'
 const fetchApi = async (
@@ -10,20 +9,20 @@ const fetchApi = async (
 ): Promise<any> => {
   const token = window.localStorage.getItem('access_token')
 
-  // console.log(myRequest)
-  // myRequest.credentials = 'omit'
   try {
-    const res: any = await fetch(api + url, {
+    const res: any = await fetch(url, {
       credentials: 'omit',
       ...obj,
       headers: {
         accept: 'application/vnd.github+json',
         Authorization: token && token != 'undefined' ? token : '',
+        'Content-Type': 'application/json;charset=utf-8',
       },
     })
+
     if (res.status === 500) {
       count++
-      if (count >= 4) return ElMessage.error('网络超时')
+      if (count >= 4) return ElMessage.error('网络不好哦,刷新再试试吧')
       const newRes = await fetchApi(url, obj, count)
       return newRes
     }
@@ -38,20 +37,30 @@ const fetchApi = async (
     if (res.ok) res.data = await res.json()
     return res
   } catch (err) {
+    console.log(err)
     count++
-    if (count >= 4) return ElMessage.error('网络超时')
+    if (count >= 4) return ElMessage.error('网络不好哦,刷新再试试吧')
     const newRes = await fetchApi(url, obj, count)
     return newRes
   }
 }
+
+// 获取token
+export const getTokenApi = async (url: string, params: object) => {
+  const res = await fetchApi(github + url, {
+    method: 'POST',
+    body: JSON.stringify(params),
+  })
+  return res
+}
 // 获取文件
 export const getIMagesApi = async (url: string = '') => {
-  const res = await fetchApi(url)
+  const res = await fetchApi(api + url)
   return res
 }
 // 上传文件 修改文件
 export const uploadImageApi = async (url: string = '', params: object) => {
-  const res = await fetchApi(url, {
+  const res = await fetchApi(api + url, {
     method: 'PUT',
     body: JSON.stringify(params),
   })
@@ -59,7 +68,7 @@ export const uploadImageApi = async (url: string = '', params: object) => {
 }
 // 删除文件
 export const deleteImageApi = async (url: string = '', params: object) => {
-  const res = await fetchApi(url, {
+  const res = await fetchApi(api + url, {
     method: 'DELETE',
     body: JSON.stringify(params),
   })
@@ -67,11 +76,11 @@ export const deleteImageApi = async (url: string = '', params: object) => {
 }
 
 export const getUserApi = async () => {
-  const res = await fetchApi('/user')
+  const res = await fetchApi(api + '/user')
   return res
 }
 
 export const getUserRepoApi = async (url: string) => {
-  const res = await fetchApi(`/repos/${url}`)
+  const res = await fetchApi(`${api}/repos/${url}`)
   return res
 }
