@@ -18,14 +18,19 @@
         >
           <template #placeholder>
             <div class="image-placeholder">
-              <el-icon><Loading /></el-icon>
+              <el-icon>
+                <Loading />
+              </el-icon>
             </div>
           </template>
           <template #error>
             <div class="image-error">
-              <el-icon><Loading /></el-icon>
-            </div> </template
-        ></el-image>
+              <el-icon>
+                <Loading />
+              </el-icon>
+            </div>
+          </template>
+        </el-image>
         <div class="img-name">{{ list.name }}</div>
       </div>
     </div>
@@ -58,45 +63,106 @@
       :close-on-click-modal="false"
     >
       <div class="upload-img" v-if="!uploaded">
-        <div class="img-box">
-          <div
-            class="img-list"
-            v-for="item in fileData.imgs"
-            :key="item.base64"
-          >
-            <el-image :src="item.base64" fit="cover"></el-image>
-            <div class="layer" v-if="item.upload">
-              <div class="uploading">
-                <el-icon class="load" v-if="item.uploadStatus === 'loading'"
-                  ><Loading
-                /></el-icon>
-                <el-icon class="success" v-if="item.uploadStatus === 'success'"
-                  ><Select
-                /></el-icon>
-                <div class="error-box" v-if="item.uploadStatus === 'error'">
-                  <el-icon class="error" @click="reUpload(item)"
-                    ><Refresh
-                  /></el-icon>
-                  <span class="info">network error</span>
+        <el-tabs>
+          <el-tab-pane label="本地上传">
+            <div class="img-box">
+              <div
+                class="img-list"
+                v-for="item in fileData.imgs"
+                :key="item.base64"
+              >
+                <el-image :src="item.base64" fit="cover"></el-image>
+                <div class="layer" v-if="item.upload">
+                  <div class="uploading">
+                    <el-icon
+                      class="load"
+                      v-if="item.uploadStatus === 'loading'"
+                    >
+                      <Loading />
+                    </el-icon>
+                    <el-icon
+                      class="success"
+                      v-if="item.uploadStatus === 'success'"
+                      ><Select
+                    /></el-icon>
+                    <div class="error-box" v-if="item.uploadStatus === 'error'">
+                      <el-icon class="error" @click="reUpload(item, 'file')">
+                        <Refresh />
+                      </el-icon>
+                      <span class="info">network error</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="upload-btn" v-if="fileData.imgs.length < 8">
+                <el-icon class="icon">
+                  <Plus />
+                </el-icon>
+                <input
+                  type="file"
+                  accept="image/* "
+                  class="file"
+                  @change="uploadFine"
+                  multiple
+                />
+              </div>
+            </div>
+            <div class="submit-btn">
+              <el-button type="primary" @click="uploadImg" :loading="fileUpload"
+                >开始上传</el-button
+              >
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="网络链接">
+            <div class="img-box">
+              <el-input
+                placeholder="网络图片地址"
+                v-model="fileData.urlInput"
+                @blur="setUrlImgs"
+              ></el-input>
+              <div class="tip">只支持后缀.jpeg|.jpg|.png的图片</div>
+              <div class="img-list" v-if="fileData.urlImg.base64">
+                <el-image :src="fileData.urlImg.base64" fit="cover"></el-image>
+                <div class="layer" v-if="fileData.urlImg.upload">
+                  <div class="uploading">
+                    <el-icon
+                      class="load"
+                      v-if="fileData.urlImg.uploadStatus === 'loading'"
+                    >
+                      <Loading />
+                    </el-icon>
+                    <el-icon
+                      class="success"
+                      v-if="fileData.urlImg.uploadStatus === 'success'"
+                      ><Select
+                    /></el-icon>
+                    <div
+                      class="error-box"
+                      v-if="fileData.urlImg.uploadStatus === 'error'"
+                    >
+                      <el-icon
+                        class="error"
+                        @click="reUpload(fileData.urlImg, 'url')"
+                      >
+                        <Refresh />
+                      </el-icon>
+                      <span class="info">network error</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div class="upload-btn" v-if="fileData.imgs.length < 8">
-            <el-icon class="icon"><Plus /></el-icon>
-            <input
-              type="file"
-              accept="image/* "
-              class="file"
-              @change="uploadFine"
-              multiple
-            />
-          </div>
-        </div>
-        <div class="submit-btn">
-          <el-button type="primary" @click="uploadImg">开始上传</el-button>
-        </div>
+            <div class="submit-btn">
+              <el-button
+                type="primary"
+                @click="UrluploadImg"
+                :loading="urlUpload"
+                >开始上传</el-button
+              >
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
       <div class="uploaded-images" v-else>
         <ImageDetail :images="fileData.uploadedImgs" />
@@ -141,6 +207,7 @@ import { useStore } from 'vuex'
 import { Plus } from '@element-plus/icons-vue'
 import ImageDetail from '@/components/ImageDetail/ImageDetail.vue'
 import { useRoute, useRouter } from 'vue-router'
+import { he } from 'element-plus/es/locale'
 const store = useStore()
 const router = useRouter()
 interface item {
@@ -336,6 +403,8 @@ const continueUpload = () => {
   uploaded.value = false
   fileData.uploadedImgs = []
   continueBtn.value = false
+  urlUpload.value = false
+  fileUpload.value = false
 }
 
 interface imgs {
@@ -348,6 +417,8 @@ interface imgs {
 const fileData = reactive({
   imgs: [] as Array<imgs>,
   uploadedImgs: [] as Array<img>,
+  urlImg: {} as imgs,
+  urlInput: '' as string,
 })
 interface w {
   BASE64: any
@@ -381,6 +452,47 @@ const uploadFine = (e: any) => {
         })
       }
     }
+  }
+}
+const getImgType = (url: string): Promise<any> => {
+  return new Promise((reslove) => {
+    const types = ['.png', '.jpeg', '.webp', '.jpg']
+    for (let i = 0; i < types.length; i++) {
+      if (url.lastIndexOf(types[i]) > -1) {
+        const type = types[i].replace('.', '')
+        const res = type === 'jpg' ? 'jpeg' : type
+        return reslove(res)
+      }
+    }
+    return reslove(false)
+  })
+}
+// 网络地址上传
+const setUrlImgs = async () => {
+  if (!fileData.urlInput) return
+  const img = new Image()
+  img.src = fileData.urlInput
+  img.setAttribute('crossOrigin', 'Anonymous')
+  img.onload = async () => {
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const width = img.width
+    const height = img.height
+    canvas.width = width
+    canvas.height = height
+    ctx?.drawImage(img, 0, 0, width, height, 0, 0, width, height)
+    const imgType = await getImgType(fileData.urlInput)
+    if (!imgType) return ElMessage.error('只支持jpg,jpeg,png')
+    fileData.urlImg = {
+      name: new Date().getTime() + '.' + imgType,
+      base64: canvas.toDataURL('image/' + imgType),
+      upload: false,
+      uploadStatus: 'loading',
+      imgUrl: canvas.toDataURL('image/' + imgType),
+    }
+  }
+  img.onerror = () => {
+    ElMessage.error('图片地址不正确或跨域错误')
   }
 }
 
@@ -446,13 +558,16 @@ const getNotFullDir = (
 }
 
 // 上传图片
-const uploadOneImg = async (image: imgs, len: number) => {
+const uploadOneImg = async (image: imgs, len: number, type: string) => {
   const obj = {
     message: 'upload',
     content: urlSateBase64Encode(image.base64),
   }
   const path = await getNotFullDir(len)
-  const name = await checkRepeat(image.name, path)
+  let name = ''
+  if (type === 'file') name = await checkRepeat(image.name, path)
+  if (type === 'url') name = image.name
+
   image.upload = true
   const url = `/repos/${settingInfo.value.owner}/${settingInfo.value.repo}/contents/${path}/${name}`
 
@@ -473,18 +588,34 @@ const uploadOneImg = async (image: imgs, len: number) => {
   }
 }
 // 出差，重新上传
-const reUpload = async (item: imgs) => {
+const reUpload = async (item: imgs, type: string) => {
   item.uploadStatus = 'loading'
-  await uploadOneImg(item, 1)
+  await uploadOneImg(item, 1, type)
+  if (type === 'file') {
+    if (fileData.uploadedImgs.length === fileData.imgs.length) {
+      fileData.imgs = []
+      uploaded.value = true
+      continueBtn.value = true
+    }
+  } else if (type === 'url') {
+    if (fileData.uploadedImgs.length === 1) {
+      fileData.urlImg = {} as any
+      fileData.urlInput = ''
+      uploaded.value = true
+      continueBtn.value = true
+    }
+  }
 }
+const fileUpload = ref(false)
+const urlUpload = ref(false)
 // 开始上传
 const uploadImg = async () => {
   const images = fileData.imgs
   const len = fileData.imgs.length
   if (!len) return
-
+  fileUpload.value = true
   for (let i = 0; i < len; i++) {
-    await uploadOneImg(images[i], len)
+    await uploadOneImg(images[i], len, 'file')
   }
   if (fileData.uploadedImgs.length === len) {
     fileData.imgs = []
@@ -492,7 +623,18 @@ const uploadImg = async () => {
     continueBtn.value = true
   }
 }
-
+// 网络地址方式开始上传
+const UrluploadImg = async () => {
+  if (!fileData.urlImg.base64) return
+  urlUpload.value = true
+  await uploadOneImg(fileData.urlImg, 1, 'url')
+  if (fileData.uploadedImgs.length === 1) {
+    fileData.urlImg = {} as any
+    fileData.urlInput = ''
+    uploaded.value = true
+    continueBtn.value = true
+  }
+}
 // 关闭上传表单
 const closeUploadDialog = () => {
   store.commit('showUploadDialog', false)
@@ -500,6 +642,10 @@ const closeUploadDialog = () => {
   fileData.imgs = []
   fileData.uploadedImgs = []
   continueBtn.value = false
+  fileData.urlInput = ''
+  fileData.urlImg = {} as any
+  urlUpload.value = false
+  fileUpload.value = false
 }
 const imgLoadError = async (e: any) => {
   reSetImgUrl(e.target.src, e.target, 5)
