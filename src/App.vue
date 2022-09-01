@@ -45,7 +45,7 @@ provide('reload', reload)
     max-width 140rem
     width 100%
     margin 0 auto
-    min-height 76.5vh
+    min-height  89.7vh
     box-sizing: border-box
   }
   footer {
