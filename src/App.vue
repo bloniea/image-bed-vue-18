@@ -35,6 +35,7 @@ provide('reload', reload)
   display flex
   justify-content space-between
   flex-direction column
+  min-height 100%
   header {
     background rgba(255, 255, 255, 0.8)
     box-sizing: border-box
@@ -45,7 +46,6 @@ provide('reload', reload)
     max-width 140rem
     width 100%
     margin 0 auto
-    min-height  89.7vh
     box-sizing: border-box
   }
   footer {
