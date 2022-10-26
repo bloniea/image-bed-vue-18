@@ -1,7 +1,7 @@
 <template>
   <div class="loading">
     <div class="img">
-      <el-image src="https://cloud.bloniea.xyz/images/loading.gif"></el-image>
+      <el-image src="https://image-cdn.bloniea.ml/images1/loading.gif"></el-image>
     </div>
   </div>
 </template>
