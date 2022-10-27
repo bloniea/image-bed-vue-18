@@ -1,5 +1,30 @@
 .home {
   // height 100%
+  .search {
+    display flex
+    background rgba(255, 255, 255, 0.7)
+    box-shadow 6px 6px 5px #0000001f
+    padding 1rem
+    .label {
+      font-size 2.4rem
+      padding-right 1rem
+    }
+    .title {
+      font-size 2.4rem
+      color #b854d4
+    }
+    .close {
+      svg {
+        width 2.4rem
+        height 2.4rem
+        padding 0.5rem 0
+        cursor pointer
+        &:hover {
+          color #b854d4
+        }
+      }
+    }
+  }
   .img-box {
     width 100%
     display flex
@@ -13,7 +38,7 @@
       margin 1rem (5% / 10)
       cursor pointer
       box-shadow 0.6rem 0.6rem 0.5rem #0000001f
-      border 0.2rem solid #ffc0cb
+      border 0.5rem solid #ffc0cb
       box-sizing border-box
       overflow hidden
       position relative

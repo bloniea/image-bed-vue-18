@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <header>
-      <MyHeader></MyHeader>
+      <MyHeader @search="search"></MyHeader>
     </header>
     <main>
-      <router-view v-if="isRouterAlive"> </router-view>
+      <router-view v-if="isRouterAlive" :keyword="keyword.val" @clearSearch="clearSearch"> </router-view>
     </main>
 
     <footer>©2022 bloniea. All rights reserved.</footer>
@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from '@vue/reactivity'
-import { provide } from '@vue/runtime-core'
+import { reactive, ref } from '@vue/reactivity'
+import { computed, provide } from '@vue/runtime-core'
 import { nextTick } from 'process'
 import MyHeader from './components/MyHeader/MyHeader.vue'
 import { useRoute } from 'vue-router'
@@ -26,12 +26,27 @@ const reload = (): void => {
     isRouterAlive.value = true
   })
 }
+const keyword = reactive({
+  val: ''
+})
+// 搜索内容
+const search = (val: string) => {
+  keyword.val = val
+
+
+}
+// 清楚搜索
+const clearSearch = () => {
+  keyword.val = ''
+}
 provide('reload', reload)
+
+
 </script>
 
 <style lang="stylus" scoped>
 .container {
-  // height 100%
+  height 100%
   display flex
   justify-content space-between
   flex-direction column

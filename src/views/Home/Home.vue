@@ -1,6 +1,14 @@
 <template>
   <MyLoading v-if="loading" />
   <div class="home" v-else>
+    <div class="search" v-if="props.keyword">
+      <div class="label">Search:</div>
+      <div class="title">{{ props.keyword }}</div>
+      <div class="close" @click="clearSearch">
+        <Close></Close>
+      </div>
+
+    </div>
     <div class="img-box" v-if="imagesData.length">
       <div class="img" v-for="list in imagesData" :key="list.path" @click="showImgDetail(list)">
         <!-- <img v-lazy="config.url + list.path" /> -->
@@ -149,7 +157,7 @@ import { reactive, ref } from '@vue/reactivity'
 import config from '@/config'
 import pagination from '@/components/Pagination/Pagination.vue'
 import MyLoading from '@/components/MyLoading/MyLoading.vue'
-import { computed, watch } from '@vue/runtime-core'
+import { computed, inject, watch } from '@vue/runtime-core'
 import {
   CopyDocument,
   Loading,
@@ -160,10 +168,10 @@ import {
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import { useStore } from 'vuex'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Close } from '@element-plus/icons-vue'
 import ImageDetail from '@/components/ImageDetail/ImageDetail.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { he } from 'element-plus/es/locale'
+
 const store = useStore()
 const router = useRouter()
 interface item {
@@ -182,8 +190,9 @@ const loading = ref(true)
 const data = reactive({
   dir: [] as Array<string>,
   images: [] as Array<item>,
+  searchImages: [] as Array<item>,
   page: {
-    pageSize: <number>20,
+    pageSize: <number>15,
     total: <number>0,
     currentPage: <number>1,
   },
@@ -226,7 +235,7 @@ const getIMages = async (i: number = 0) => {
   }
   // }
 
-  data.page.total = data.images.length
+  data.images = data.images.filter(fotmatImages)
   loading.value = false
 }
 // 去除非图片数据
@@ -238,19 +247,41 @@ const fotmatImages = (obj: item): any => {
 }
 // 搜索
 const route = useRoute()
-const searchImages = (obj: item): any => {
-  const keyword = route.query.keyword
-  const query = keyword ? keyword : ''
-  const indexof = obj.name.indexOf(query.toString())
-  return indexof > -1
+// 父组件传过来的值
+const props = defineProps({
+  keyword: {
+    type: String,
+    default: '',
+  },
+
+})
+
+// 清楚搜索内容
+const emit = defineEmits(['clearSearch'])
+const clearSearch = () => {
+  // props.keyword = ''
+  emit('clearSearch')
 }
+// 监听父组件传过来的值，也就是搜索框的值
+watch(() => props.keyword, (n) => {
+
+  data.page.currentPage = 1
+  data.searchImages = data.images.filter((obj) => {
+    const indexof = obj.name.indexOf(n.toString())
+    return indexof > -1
+
+  })
+})
+
+
 const imagesData = computed(() => {
-  let images = data.images.filter(fotmatImages)
-  images = images.filter(searchImages)
-  return images.slice(
+  let images = props.keyword ? data.searchImages : data.images
+  data.page.total = images.length
+  let result = images.slice(
     (data.page.currentPage - 1) * data.page.pageSize,
     (data.page.currentPage - 1) * data.page.pageSize + data.page.pageSize
   )
+  return result
 })
 
 const currentChange = (page: number) => {
@@ -258,7 +289,7 @@ const currentChange = (page: number) => {
   loading.value = true
   setTimeout(() => {
     loading.value = false
-  }, 1000)
+  }, 500)
 }
 
 /* ----------图片详情-------- */

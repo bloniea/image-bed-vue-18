@@ -212,9 +212,12 @@ const uploadDialogVisible = () => {
 }
 
 const keyword = ref('')
+const emit = defineEmits(['search'])
 // 搜索
 const toSearch = () => {
-  router.push({ name: 'Home', query: { keyword: keyword.value } })
+
+  emit('search', keyword.value)
+  // router.push({ name: 'Home', query: { keyword: keyword.value } })
 }
 // 返回主页
 const toHome = () => {
