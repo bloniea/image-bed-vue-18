@@ -1,7 +1,11 @@
 <template>
   <div class="pagination">
     <div class="prev" v-if="props.currentPage > 1" @click="prev">prev</div>
-    <div class="next" @click="next" v-if="props.pageSize * props.currentPage < props.total">
+    <div
+      class="next"
+      @click="next"
+      v-if="props.pageSize * props.currentPage < props.total"
+    >
       next
     </div>
   </div>
@@ -23,7 +27,7 @@ const props = defineProps({
     default: 1,
   },
 })
-console.log(props.total)
+
 const emit = defineEmits(['next', 'prev'])
 const next = () => {
   let page = props.currentPage

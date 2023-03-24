@@ -7,12 +7,22 @@
       <div class="close" @click="clearSearch">
         <Close></Close>
       </div>
-
     </div>
     <div class="img-box" v-if="imagesData.length">
-      <div class="img" v-for="list in imagesData" :key="list.path" @click="showImgDetail(list)">
+      <div
+        class="img"
+        v-for="list in imagesData"
+        :key="list.path"
+        @click="showImgDetail(list)"
+      >
         <!-- <img v-lazy="config.url + list.path" /> -->
-        <el-image :src="settingInfo.url + list.path" fit="cover" lazy scroll-container="#app" @error="imgLoadError">
+        <el-image
+          :src="config.url + list.path"
+          fit="cover"
+          lazy
+          scroll-container="#app"
+          @error="imgLoadError"
+        >
           <template #placeholder>
             <div class="image-placeholder">
               <el-icon>
@@ -32,30 +42,56 @@
       </div>
     </div>
     <el-empty description="空空如也" v-else />
-    <el-dialog :title="'图片信息  - ' + imgData.img.name" v-model="dialogVisible" destroy-on-close @close="closeImgDetail">
+    <el-dialog
+      :title="'图片信息  - ' + imgData.img.name"
+      v-model="dialogVisible"
+      destroy-on-close
+      @close="closeImgDetail"
+    >
       <ImageDetail :images="imgData.imgs"> </ImageDetail>
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="deleteImage" v-if="loginStatus && delShow" type="danger">删除</el-button>
+          <el-button
+            @click="deleteImage"
+            v-if="loginStatus && delShow"
+            type="danger"
+            >删除</el-button
+          >
           <el-button @click="closeImgDetail">关闭</el-button>
         </span>
       </template>
     </el-dialog>
 
-    <el-dialog v-model="uploadDialogVisible" title="图片上传" destroy-on-close @close="closeUploadDialog"
-      :close-on-click-modal="false">
+    <el-dialog
+      v-model="uploadDialogVisible"
+      title="图片上传"
+      destroy-on-close
+      @close="closeUploadDialog"
+      :close-on-click-modal="false"
+    >
       <div class="upload-img" v-if="!uploaded">
         <el-tabs>
           <el-tab-pane label="本地上传">
             <div class="img-box">
-              <div class="img-list" v-for="item in fileData.imgs" :key="item.base64">
+              <div
+                class="img-list"
+                v-for="item in fileData.imgs"
+                :key="item.base64"
+              >
                 <el-image :src="item.base64" fit="cover"></el-image>
                 <div class="layer" v-if="item.upload">
                   <div class="uploading">
-                    <el-icon class="load" v-if="item.uploadStatus === 'loading'">
+                    <el-icon
+                      class="load"
+                      v-if="item.uploadStatus === 'loading'"
+                    >
                       <Loading />
                     </el-icon>
-                    <el-icon class="success" v-if="item.uploadStatus === 'success'"><Select /></el-icon>
+                    <el-icon
+                      class="success"
+                      v-if="item.uploadStatus === 'success'"
+                      ><Select
+                    /></el-icon>
                     <div class="error-box" v-if="item.uploadStatus === 'error'">
                       <el-icon class="error" @click="reUpload(item, 'file')">
                         <Refresh />
@@ -70,27 +106,52 @@
                 <el-icon class="icon">
                   <Plus />
                 </el-icon>
-                <input type="file" accept="image/* " class="file" @change="uploadFine" multiple />
+                <input
+                  type="file"
+                  accept="image/* "
+                  class="file"
+                  @change="uploadFine"
+                  multiple
+                />
               </div>
             </div>
             <div class="submit-btn">
-              <el-button type="primary" @click="uploadImg" :loading="fileUpload">开始上传</el-button>
+              <el-button type="primary" @click="uploadImg" :loading="fileUpload"
+                >开始上传</el-button
+              >
             </div>
           </el-tab-pane>
           <el-tab-pane label="网络链接">
             <div class="img-box">
-              <el-input placeholder="网络图片地址" v-model="fileData.urlInput" @blur="setUrlImgs"></el-input>
+              <el-input
+                placeholder="网络图片地址"
+                v-model="fileData.urlInput"
+                @blur="setUrlImgs"
+              ></el-input>
               <div class="tip">只支持后缀.jpeg|.jpg|.png的图片</div>
               <div class="img-list" v-if="fileData.urlImg.base64">
                 <el-image :src="fileData.urlImg.base64" fit="cover"></el-image>
                 <div class="layer" v-if="fileData.urlImg.upload">
                   <div class="uploading">
-                    <el-icon class="load" v-if="fileData.urlImg.uploadStatus === 'loading'">
+                    <el-icon
+                      class="load"
+                      v-if="fileData.urlImg.uploadStatus === 'loading'"
+                    >
                       <Loading />
                     </el-icon>
-                    <el-icon class="success" v-if="fileData.urlImg.uploadStatus === 'success'"><Select /></el-icon>
-                    <div class="error-box" v-if="fileData.urlImg.uploadStatus === 'error'">
-                      <el-icon class="error" @click="reUpload(fileData.urlImg, 'url')">
+                    <el-icon
+                      class="success"
+                      v-if="fileData.urlImg.uploadStatus === 'success'"
+                      ><Select
+                    /></el-icon>
+                    <div
+                      class="error-box"
+                      v-if="fileData.urlImg.uploadStatus === 'error'"
+                    >
+                      <el-icon
+                        class="error"
+                        @click="reUpload(fileData.urlImg, 'url')"
+                      >
                         <Refresh />
                       </el-icon>
                       <span class="info">network error</span>
@@ -100,27 +161,46 @@
               </div>
             </div>
             <div class="submit-btn">
-              <el-button type="primary" @click="UrluploadImg" :loading="urlUpload">开始上传</el-button>
+              <el-button
+                type="primary"
+                @click="UrluploadImg"
+                :loading="urlUpload"
+                >开始上传</el-button
+              >
             </div>
           </el-tab-pane>
           <el-tab-pane label="剪贴板">
             <div class="img-box">
-
-              <el-button @mouseup="getClipboardImage" style="width:100%">获取剪贴板图片</el-button>
-
-
+              <el-button @mouseup="getClipboardImage" style="width: 100%"
+                >获取剪贴板图片</el-button
+              >
 
               <div class="img-list" v-if="fileData.clipboardImage.base64">
-                <el-image :src="fileData.clipboardImage.base64" fit="cover"></el-image>
+                <el-image
+                  :src="fileData.clipboardImage.base64"
+                  fit="cover"
+                ></el-image>
                 <div class="layer" v-if="fileData.clipboardImage.upload">
                   <div class="uploading">
-                    <el-icon class="load" v-if="fileData.clipboardImage.uploadStatus === 'loading'">
+                    <el-icon
+                      class="load"
+                      v-if="fileData.clipboardImage.uploadStatus === 'loading'"
+                    >
                       <Loading />
                     </el-icon>
-                    <el-icon class="success" v-if="fileData.clipboardImage.uploadStatus === 'success'"><Select />
+                    <el-icon
+                      class="success"
+                      v-if="fileData.clipboardImage.uploadStatus === 'success'"
+                      ><Select />
                     </el-icon>
-                    <div class="error-box" v-if="fileData.clipboardImage.uploadStatus === 'error'">
-                      <el-icon class="error" @click="reUpload(fileData.clipboardImage, 'url')">
+                    <div
+                      class="error-box"
+                      v-if="fileData.clipboardImage.uploadStatus === 'error'"
+                    >
+                      <el-icon
+                        class="error"
+                        @click="reUpload(fileData.clipboardImage, 'url')"
+                      >
                         <Refresh />
                       </el-icon>
                       <span class="info">network error</span>
@@ -130,7 +210,12 @@
               </div>
             </div>
             <div class="submit-btn">
-              <el-button type="primary" @click="clipboardUploadImg" :loading="clipboardUpload">开始上传</el-button>
+              <el-button
+                type="primary"
+                @click="clipboardUploadImg"
+                :loading="clipboardUpload"
+                >开始上传</el-button
+              >
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -140,13 +225,20 @@
       </div>
       <template #footer>
         <span class="dialog-footer">
-          <el-button type="primary" @click="continueUpload" v-if="continueBtn">继续上传</el-button>
+          <el-button type="primary" @click="continueUpload" v-if="continueBtn"
+            >继续上传</el-button
+          >
           <el-button @click="closeUploadDialog">关闭</el-button>
         </span>
       </template>
     </el-dialog>
-    <pagination :pageSize="data.page.pageSize" :total="data.page.total" :currentPage="data.page.currentPage"
-      @next="currentChange" @prev="currentChange">
+    <pagination
+      :pageSize="data.page.pageSize"
+      :total="data.page.total"
+      :currentPage="data.page.currentPage"
+      @next="currentChange"
+      @prev="currentChange"
+    >
     </pagination>
   </div>
 </template>
@@ -184,7 +276,6 @@ interface imagesCount {
   dir: string
   total: number
 }
-const settingInfo = computed(() => store.state.settingInfo)
 
 const loading = ref(true)
 const data = reactive({
@@ -201,7 +292,7 @@ const data = reactive({
 // 获取文件夹
 const getDir = async () => {
   loading.value = true
-  const url = `/repos/${settingInfo.value.owner}/${settingInfo.value.repo}/contents`
+  const url = `/repos/${config.owner}/${config.repo}/contents`
 
   const res = await getIMagesApi(url)
   if (!res.ok) return
@@ -221,7 +312,7 @@ const getIMages = async (i: number = 0) => {
   }
   // for (let i = 0, len = data.dir.length; i < len; i++) {
 
-  const url = `/repos/${settingInfo.value.owner}/${settingInfo.value.repo}/contents/${data.dir[i]}`
+  const url = `/repos/${config.owner}/${config.repo}/contents/${data.dir[i]}`
   const res = await getIMagesApi(url)
 
   if (res.ok) {
@@ -253,7 +344,6 @@ const props = defineProps({
     type: String,
     default: '',
   },
-
 })
 
 // 清楚搜索内容
@@ -263,16 +353,16 @@ const clearSearch = () => {
   emit('clearSearch')
 }
 // 监听父组件传过来的值，也就是搜索框的值
-watch(() => props.keyword, (n) => {
-
-  data.page.currentPage = 1
-  data.searchImages = data.images.filter((obj) => {
-    const indexof = obj.name.indexOf(n.toString())
-    return indexof > -1
-
-  })
-})
-
+watch(
+  () => props.keyword,
+  (n) => {
+    data.page.currentPage = 1
+    data.searchImages = data.images.filter((obj) => {
+      const indexof = obj.name.indexOf(n.toString())
+      return indexof > -1
+    })
+  }
+)
 
 const imagesData = computed(() => {
   let images = props.keyword ? data.searchImages : data.images
@@ -349,7 +439,7 @@ const deleteImage = async () => {
       message: '正在删除，请稍后！',
       duration: 0,
     })
-    const url = `/repos/${settingInfo.value.owner}/${settingInfo.value.repo}/contents/${image.path}`
+    const url = `/repos/${config.owner}/${config.repo}/contents/${image.path}`
 
     const res = await deleteImageApi(url, delObj)
     message.close()
@@ -407,7 +497,7 @@ const fileData = reactive({
   uploadedImgs: [] as Array<img>,
   urlImg: {} as imgs,
   urlInput: '' as string,
-  clipboardImage: {} as imgs
+  clipboardImage: {} as imgs,
 })
 interface w {
   BASE64: any
@@ -558,7 +648,7 @@ const uploadOneImg = async (image: imgs, len: number, type: string) => {
   if (type === 'url') name = image.name
 
   image.upload = true
-  const url = `/repos/${settingInfo.value.owner}/${settingInfo.value.repo}/contents/${path}/${name}`
+  const url = `/repos/${config.owner}/${config.repo}/contents/${path}/${name}`
 
   const res = await uploadImageApi(url, obj)
   if (res.ok) {
@@ -576,7 +666,7 @@ const uploadOneImg = async (image: imgs, len: number, type: string) => {
     image.uploadStatus = 'error'
   }
 }
-// 出差，重新上传
+// 出错，重新上传
 const reUpload = async (item: imgs, type: string) => {
   item.uploadStatus = 'loading'
   await uploadOneImg(item, 1, type)
@@ -660,9 +750,9 @@ const reSetImgUrl = (src: string, target: any, count: number = 1) => {
 const getClipboardImage = async () => {
   try {
     const permissions = await navigator.permissions.query({
-      name: 'clipboard-read' as any
+      name: 'clipboard-read' as any,
     })
-    if (permissions.state == "granted" || permissions.state == "prompt") {
+    if (permissions.state == 'granted' || permissions.state == 'prompt') {
       const clipboard: any = await navigator.clipboard.read()
       let blob: any
       for (var i = 0; i < clipboard.length; i++) {
@@ -687,11 +777,8 @@ const getClipboardImage = async () => {
   } catch (error) {
     console.error(error)
   }
-
-
 }
 const clipboardUploadImg = async () => {
-
   if (!fileData.clipboardImage.base64) return
   clipboardUpload.value = true
   await uploadOneImg(fileData.clipboardImage, 1, 'url')

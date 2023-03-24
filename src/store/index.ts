@@ -26,18 +26,18 @@ const userInfo = (): any => {
   }
 }
 
-const settingData = (): any => {
-  const data = window.localStorage.getItem('settingInfo')
-  if (data && data !== 'undefined') {
-    return JSON.parse(data)
-  } else {
-    return {
-      url: config.url,
-      owner: config.owner,
-      repo: config.repo,
-    }
-  }
-}
+// const settingData = (): any => {
+//   const data = window.localStorage.getItem('settingInfo')
+//   if (data && data !== 'undefined') {
+//     return JSON.parse(data)
+//   } else {
+//     return {
+//       url: config.url,
+//       owner: config.owner,
+//       repo: config.repo,
+//     }
+//   }
+// }
 // 创建一个新的 store 实例
 const store = createStore({
   state() {
@@ -45,7 +45,7 @@ const store = createStore({
       status: status(),
       userInfo: userInfo(),
       uploadDialogVisible: false,
-      settingInfo: settingData(),
+      // settingInfo: settingData(),
     }
   },
   mutations: {
@@ -58,9 +58,9 @@ const store = createStore({
     setUserInfo(state, val) {
       state.userInfo = val
     },
-    setSettingInfo(state, val) {
-      state.settingInfo = val
-    },
+    // setSettingInfo(state, val) {
+    //   state.settingInfo = val
+    // },
   },
 })
 export default store
