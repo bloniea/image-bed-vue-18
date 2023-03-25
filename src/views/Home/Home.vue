@@ -42,6 +42,7 @@
       </div>
     </div>
     <el-empty description="空空如也" v-else />
+    <!-- 图片详情 -->
     <el-dialog
       :title="'图片信息  - ' + imgData.img.name"
       v-model="dialogVisible"
@@ -61,7 +62,7 @@
         </span>
       </template>
     </el-dialog>
-
+    <!-- 上传 -->
     <el-dialog
       v-model="uploadDialogVisible"
       title="图片上传"

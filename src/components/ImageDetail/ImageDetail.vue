@@ -42,7 +42,7 @@
               readonly
               :value="config.url + list.path"
             />
-            <el-button :icon="CopyDocument" @click="copyUrl('.urlDom' + index)"
+            <el-button :icon="CopyDocument" @click="copyUrl('.htmlDom' + index)"
               >复制</el-button
             >
           </div>
@@ -82,6 +82,7 @@
 import { CopyDocument } from '@element-plus/icons-vue'
 import config from '@/config'
 import { ref } from '@vue/runtime-core'
+import { ElMessage } from 'element-plus'
 interface img {
   name: string
   path: string
@@ -91,11 +92,22 @@ interface img {
 const props = defineProps<{
   images: Array<img>
 }>()
-const copyUrl = (classname: string) => {
-  const dom = <HTMLInputElement>document.querySelector(classname + ' input')
+const copyUrl = async (className: string) => {
+  const dom = <HTMLInputElement>document.querySelector(className + ' input')
 
-  dom.select()
-  document.execCommand('copy')
+  try {
+    await navigator.clipboard.writeText(dom.value)
+    ElMessage({
+      message: '复制成功',
+      type: 'success',
+      duration: 1000,
+    })
+  } catch (error) {
+    ElMessage({
+      message: '复制失败，写入剪贴板的权限',
+      type: 'error',
+    })
+  }
 }
 </script>
 
