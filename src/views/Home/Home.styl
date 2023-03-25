@@ -35,7 +35,7 @@
       // margin
       width 19%
       height 30rem
-      margin 1rem (5% / 10)
+      margin 0.5rem (5% / 10)
       cursor pointer
       box-shadow 0.6rem 0.6rem 0.5rem #0000001f
       border 0.5rem solid #ffc0cb
@@ -231,25 +231,36 @@
   @media screen and (max-width 1024px) {
     .img-box .img {
       width 32%
-      margin 1rem (4% / 6)
+      margin 0.5rem (4% / 6)
     }
   }
   @media screen and (max-width 768px) {
     .img-box .img {
-      width 48%
-      margin 1rem (4% / 4)
+      width 49%
+      margin 0.5rem (2% / 4)
     }
     :deep(.el-overlay .el-dialog) {
       --el-dialog-width 90%
     }
   }
-  @media screen and (max-width 500px) {
+  @media screen and (max-width 400px) {
     :deep(.image-detail) {
       .img-list {
         .img {
           height 20rem
-          width 90%
-          margin 1rem 0
+          width 98%
+          margin 0.5rem 1%
+        }
+        .info {
+          .left {
+            flex-direction column
+            > div {
+              margin 0.5rem 0
+            }
+            > button {
+              margin 0.5rem 0
+            }
+          }
         }
         .info .item > span {
           width 20rem
@@ -257,8 +268,8 @@
       }
     }
     .img-box .img {
-      width 94%
-      margin 1rem (6% / 2)
+      width 97%
+      margin 0.5rem (3% / 2)
     }
   }
 }

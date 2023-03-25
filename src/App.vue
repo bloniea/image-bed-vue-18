@@ -73,5 +73,15 @@ provide('reload', reload)
     color #ccc
     box-sizing: border-box
   }
+  @media screen and (max-width 768px) {
+    main {
+      padding 1rem
+    }
+}
+@media screen and (max-width 320px) {
+    main {
+      padding 0rem
+    }
+}
 }
 </style>

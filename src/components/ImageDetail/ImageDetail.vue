@@ -41,6 +41,7 @@
               :class="'urlDom' + index"
               readonly
               :value="config.url + list.path"
+              @click="selectAll('.urlDom' + index)"
             />
             <el-button :icon="CopyDocument" @click="copyUrl('.urlDom' + index)"
               >复制</el-button
@@ -54,6 +55,7 @@
               readonly
               :class="'htmlDom' + index"
               :value="`<img src= &quot;${config.url + list.path}&quot; />`"
+              @click="selectAll('.htmlDom' + index)"
             />
             <el-button :icon="CopyDocument" @click="copyUrl('.htmlDom' + index)"
               >复制</el-button
@@ -67,6 +69,7 @@
               :class="'mdDom' + index"
               readonly
               :value="` ![${list.name}](${config.url + list.path})`"
+              @click="selectAll('.mdDom' + index)"
             />
             <el-button :icon="CopyDocument" @click="copyUrl('.mdDom' + index)"
               >复制</el-button
@@ -100,19 +103,25 @@ const copyUrl = async (className: string) => {
       await navigator.clipboard.writeText(dom.value)
     } else {
       dom.select()
+      dom.setSelectionRange(0, dom.value.length)
       document.execCommand('copy')
     }
     ElMessage({
       message: '复制成功',
       type: 'success',
-      duration: 1000,
+      duration: 0,
     })
   } catch (error) {
     ElMessage({
-      message: '复制失败，缺少权限',
+      message: '复制失败，请手动复制',
       type: 'error',
     })
   }
+}
+
+const selectAll = (className: string) => {
+  const dom = <HTMLInputElement>document.querySelector(className + ' input')
+  dom.select()
 }
 </script>
 

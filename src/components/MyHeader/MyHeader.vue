@@ -27,16 +27,10 @@
         </div>
 
         <el-dropdown trigger="click">
-          <span class="user">
-            {{ userInfo.user }}
-            <el-icon class="el-icon--right">
-              <arrow-down />
-            </el-icon>
-          </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="toMyRepo(userInfo.html_url)"
-                >我的存储库</el-dropdown-item
+                >{{ userInfo.user }}的存储库</el-dropdown-item
               >
             </el-dropdown-menu>
             <el-dropdown-menu>
@@ -50,13 +44,21 @@
         <el-dropdown trigger="click">
           <span class="user">
             <div class="avatar">
-              <el-avatar :src="userInfo.avatar_url" />
+              <!-- <el-avatar :src="userInfo.avatar_url" /> -->
+              <el-avatar
+                src="https://image-cdn.bloniea.ml/images1/avatar.png"
+              />
             </div>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="toMyRepo(userInfo.html_url)"
-                >我的存储库</el-dropdown-item
+                >{{ userInfo.user }}的存储库</el-dropdown-item
+              >
+            </el-dropdown-menu>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="uploadDialogVisible"
+                >上传</el-dropdown-item
               >
             </el-dropdown-menu>
             <el-dropdown-menu>
@@ -68,7 +70,7 @@
       <div class="item" v-if="!loginStatus || !userInfo">
         <div @click="login" class="login">登陆</div>
       </div>
-      <div class="item menu app">
+      <!-- <div class="item menu app">
         <el-dropdown trigger="click">
           <el-icon>
             <Menu />
@@ -81,7 +83,7 @@
             </el-dropdown-menu>
           </template>
         </el-dropdown>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
