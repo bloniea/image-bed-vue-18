@@ -22,11 +22,10 @@
       </div>
 
       <div class="item pc" v-if="loginStatus">
-        <div class="avatar">
-          <el-avatar :src="userInfo.avatar_url" />
-        </div>
-
-        <el-dropdown trigger="click">
+        <el-dropdown trigger="hover">
+          <div class="avatar">
+            <el-avatar :src="userInfo.avatar_url" />
+          </div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="toMyRepo(userInfo.html_url)"
@@ -44,10 +43,7 @@
         <el-dropdown trigger="click">
           <span class="user">
             <div class="avatar">
-              <!-- <el-avatar :src="userInfo.avatar_url" /> -->
-              <el-avatar
-                src="https://image-cdn.bloniea.ml/images1/avatar.png"
-              />
+              <el-avatar :src="userInfo.avatar_url" />
             </div>
           </span>
           <template #dropdown>
