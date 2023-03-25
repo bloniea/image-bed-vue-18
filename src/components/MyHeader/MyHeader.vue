@@ -151,8 +151,8 @@ const getToken = async () => {
   const code = window.sessionStorage.getItem('code')
   if (code && code != 'undefined') {
     const obj = {
-      client_id: '202a106a964267fa2de7',
-      client_secret: '4e4cfd592013ead760364bf08241423b98abe5ca',
+      client_id: config.client_id,
+      client_secret: config.client_secret,
       redirect_uri: window.location.href,
       code: code,
     }
