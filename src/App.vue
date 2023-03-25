@@ -4,7 +4,12 @@
       <MyHeader @search="search"></MyHeader>
     </header>
     <main>
-      <router-view v-if="isRouterAlive" :keyword="keyword.val" @clearSearch="clearSearch"> </router-view>
+      <router-view
+        v-if="isRouterAlive"
+        :keyword="keyword.val"
+        @clearSearch="clearSearch"
+      >
+      </router-view>
     </main>
 
     <footer>©2022 bloniea. All rights reserved.</footer>
@@ -17,6 +22,7 @@ import { computed, provide } from '@vue/runtime-core'
 import { nextTick } from 'process'
 import MyHeader from './components/MyHeader/MyHeader.vue'
 import { useRoute } from 'vue-router'
+import home from '@/views/Home/Home.vue'
 const route = useRoute()
 // console.log(route.query)
 const isRouterAlive = ref(true)
@@ -27,21 +33,17 @@ const reload = (): void => {
   })
 }
 const keyword = reactive({
-  val: ''
+  val: '',
 })
 // 搜索内容
 const search = (val: string) => {
   keyword.val = val
-
-
 }
 // 清楚搜索
 const clearSearch = () => {
   keyword.val = ''
 }
 provide('reload', reload)
-
-
 </script>
 
 <style lang="stylus" scoped>

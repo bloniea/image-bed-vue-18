@@ -266,7 +266,7 @@ import ImageDetail from '@/components/ImageDetail/ImageDetail.vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const store = useStore()
-const router = useRouter()
+// const router = useRouter()
 interface item {
   type: string
   path: string

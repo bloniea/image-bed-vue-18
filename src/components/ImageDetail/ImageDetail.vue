@@ -96,7 +96,12 @@ const copyUrl = async (className: string) => {
   const dom = <HTMLInputElement>document.querySelector(className + ' input')
 
   try {
-    await navigator.clipboard.writeText(dom.value)
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(dom.value)
+    } else {
+      dom.select()
+      document.execCommand('copy')
+    }
     ElMessage({
       message: '复制成功',
       type: 'success',
@@ -104,7 +109,7 @@ const copyUrl = async (className: string) => {
     })
   } catch (error) {
     ElMessage({
-      message: '复制失败，写入剪贴板的权限' + error,
+      message: '复制失败，缺少权限',
       type: 'error',
     })
   }
