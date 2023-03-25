@@ -104,7 +104,7 @@ const copyUrl = async (className: string) => {
     })
   } catch (error) {
     ElMessage({
-      message: '复制失败，写入剪贴板的权限',
+      message: '复制失败，写入剪贴板的权限' + error,
       type: 'error',
     })
   }
