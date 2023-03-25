@@ -42,7 +42,7 @@
               readonly
               :value="config.url + list.path"
             />
-            <el-button :icon="CopyDocument" @click="copyUrl('.htmlDom' + index)"
+            <el-button :icon="CopyDocument" @click="copyUrl('.urlDom' + index)"
               >复制</el-button
             >
           </div>
