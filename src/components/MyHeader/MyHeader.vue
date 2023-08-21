@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="name-box">
-      <div class="name" @click="toHome">bloniea 姉さま的图床</div>
+      <div class="name" @click="toHome">{{ config.title }}</div>
     </div>
 
     <div class="btns">
