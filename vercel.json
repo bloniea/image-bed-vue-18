@@ -3,8 +3,11 @@
   "rewrites": [
     {
       "source": "/github/:match*",
-      "destination": "https://github.bloniea.ml/:match*"
+      "destination": "https://github.bloniea.com/:match*"
     },
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }

@@ -111,8 +111,7 @@ const login = async () => {
     scope: config.scope,
   }
 
-  window.location.href =
-    'https://github.bloniea.ml/login/oauth/authorize?' + QS.stringify(obj)
+  window.location.href = '/github/login/oauth/authorize?' + QS.stringify(obj)
   // const res = await fetch('https://github.com/login/oauth/authorize?'+QS.stringify(obj))
 }
 const route = useRoute()
