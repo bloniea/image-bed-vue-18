@@ -1,12 +1,14 @@
 <template>
   <div class="loading">
     <div class="img">
-      <el-image src="https://image-cdn.bloniea.ml/images1/loading.gif"></el-image>
+      <el-image :src="config.loading_url"></el-image>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import config from '@/config'
+</script>
 
 <style lang="stylus" scoped>
 .loading{
